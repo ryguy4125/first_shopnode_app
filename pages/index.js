@@ -1,13 +1,16 @@
 import { EmptyState, Heading, Layout, Page } from "@shopify/polaris";
 import { ResourcePicker } from "@shopify/app-bridge-react";
 import { useState } from "react";
+import store from 'store-js';
 
 function Index() {
   const [modal, setModal] = useState({open: false});
 
   function handleSelection(resources) {
     const getIdFromResources = resources.selection.map((product) => product.id);
-    console.log(getIdFromResources);
+    setModal({open:false});
+    store.set('ids', getIdFromResources);
+    console.log('Resource Ids', store.get('ids'));
   }
 
   return(
