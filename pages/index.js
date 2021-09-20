@@ -1,47 +1,64 @@
-import { EmptyState, Heading, Layout, Page } from "@shopify/polaris";
-import { ResourcePicker } from "@shopify/app-bridge-react";
-import { useState } from "react";
+import React from 'react';
+import { Page, Layout, EmptyState} from "@shopify/polaris";
+import { ResourcePicker, TitleBar } from '@shopify/app-bridge-react';
 import store from 'store-js';
-import ProductList from "../components/ProductList";
+import ProductList from '../components/ProductList';
 
-function Index() {
-  const [modal, setModal] = useState({open: false});
-  const emptyState = !store.get('ids');
+const img = 'https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg';
 
-  function handleSelection(resources) {
-    const getIdFromResources = resources.selection.map((product) => product.id);
-    setModal({open:false});
-    store.set('ids', getIdFromResources);
-    console.log('Resource Ids', store.get('ids'));
+class Index extends React.Component {
+  state = { open: false };
+  render() {
+    // A constant that defines your app's empty state
+    const emptyState = !store.get('ids');
+    return (
+      <Page>
+        <TitleBar
+          primaryAction={{
+            content: 'Select products',
+            onAction: () => this.setState({ open: true }),
+          }}
+          secondaryActions={[{
+            content: 'Clear selection',
+            onAction: () => {
+              store.clearAll();
+              this.setState({open: false});
+            },
+            destructive: true
+          }]}
+        />
+        <ResourcePicker
+          resourceType="Product"
+          showVariants={false}
+          open={this.state.open}
+          onSelection={(resources) => this.handleSelection(resources)}
+          onCancel={() => this.setState({ open: false })}
+        />
+        {emptyState ? ( // Controls the layout of your app's empty state
+          <Layout>
+            <EmptyState
+              heading="Discount your products temporarily"
+              action={{
+                content: 'Select products',
+                onAction: () => this.setState({ open: true }),
+              }}
+              image={img}
+            >
+              <p>Select products to change their price temporarily.</p>
+            </EmptyState>
+          </Layout>
+        ) : (
+          // Uses the new resource list that retrieves products by IDs
+          <ProductList />
+        )}
+      </Page>
+    );
   }
-
-  return(
-  <Page>
-    <ResourcePicker 
-        resourceType="Product"
-        showVariants={false}
-        open={modal.open}
-        onSelection={(resources) => handleSelection(resources)}
-        onCancel={() => setModal({open:false})}
-      />
-    <Layout>
-      { emptyState ?
-      <EmptyState
-        heading="Select Products"
-        action={{
-          content: 'SelectProduct',
-          onAction: () => setModal({open:true})
-        }}
-        secondaryAction={{content: 'Learn more', url: 'https://help.shopify.com'}}
-        image="https://cdn.shopify.com/s/files/1/0262/4071/2726/files/emptystate-files.png"
-        >
-        <p>Select Products</p>
-      </EmptyState>
-      :
-      <ProductList />
-    }
-    </Layout>
-  </Page>
-  )};
+  handleSelection = (resources) => {
+    const idsFromResources = resources.selection.map((product) => product.id);
+    this.setState({ open: false });
+    store.set('ids', idsFromResources);
+  };
+}
 
 export default Index;
