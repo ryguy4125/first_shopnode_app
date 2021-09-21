@@ -1,14 +1,19 @@
-import React from 'react';
-import { Page, Layout, EmptyState} from "@shopify/polaris";
+import React, { useState } from 'react';
+import { Page, Layout, EmptyState, Modal} from "@shopify/polaris";
 import { ResourcePicker, TitleBar } from '@shopify/app-bridge-react';
 import store from 'store-js';
 import ProductList from '../components/ProductList';
 
 const img = 'https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg';
 
-class Index extends React.Component {
-  state = { open: false };
-  render() {
+function Index() {
+  const [ modal, setModal ] = useState({open: false});
+
+  function handleSelection(resources) {
+    const idsFromResources = resources.selection.map((product) => product.id);
+    setModal({ open: false });
+    store.set('ids', idsFromResources);
+  };
     // A constant that defines your app's empty state
     const emptyState = !store.get('ids');
     return (
@@ -16,13 +21,13 @@ class Index extends React.Component {
         <TitleBar
           primaryAction={{
             content: 'Select products',
-            onAction: () => this.setState({ open: true }),
+            onAction: () => setModal({ open: true }),
           }}
           secondaryActions={[{
             content: 'Clear selection',
             onAction: () => {
               store.clearAll();
-              this.setState({open: false});
+              setModal({open: false});
             },
             destructive: true
           }]}
@@ -30,9 +35,9 @@ class Index extends React.Component {
         <ResourcePicker
           resourceType="Product"
           showVariants={false}
-          open={this.state.open}
-          onSelection={(resources) => this.handleSelection(resources)}
-          onCancel={() => this.setState({ open: false })}
+          open={modal.open}
+          onSelection={(resources) => handleSelection(resources)}
+          onCancel={() => setModal({ open: false })}
         />
         {emptyState ? ( // Controls the layout of your app's empty state
           <Layout>
@@ -40,7 +45,7 @@ class Index extends React.Component {
               heading="Discount your products temporarily"
               action={{
                 content: 'Select products',
-                onAction: () => this.setState({ open: true }),
+                onAction: () => setModal({ open: true }),
               }}
               image={img}
             >
@@ -53,12 +58,7 @@ class Index extends React.Component {
         )}
       </Page>
     );
-  }
-  handleSelection = (resources) => {
-    const idsFromResources = resources.selection.map((product) => product.id);
-    this.setState({ open: false });
-    store.set('ids', idsFromResources);
-  };
+  
 }
 
 export default Index;

@@ -1,3 +1,4 @@
+import React from "react";
 import gql from "graphql-tag";
 import store from 'store-js';
 import { useQuery } from "@apollo/react-hooks";
@@ -34,11 +35,27 @@ query getProducts($ids: [ID!]!){
 `
 
 function ProductList() {
+  const { loading, error, data } = useQuery(GET_PRODUCTS_BY_ID,
+    { variables: { ids: store.get('ids') } });
+
+    if (loading) return <div>Loading...</div>
+    // if (error) return <div>Errors: { error.message }</div>
+
+    // if (data) return console.log("data:", data);
+
   return (
     <div>
       <h1>Product List</h1>
+
+      {
+        data.nodes.map(item => {
+          return (
+            <p key={item.id} >{item.title}</p>
+          )
+          })
+      }
     </div>
-  )
+  );
 }
 
-export default ProductList
+export default ProductList;
