@@ -47,7 +47,7 @@ function Index() {
                 content: 'Select products',
                 onAction: () => setModal({ open: true }),
               }}
-              image={img}
+              // image={img}
             >
               <p>Select products to change their price temporarily.</p>
             </EmptyState>

@@ -1,4 +1,4 @@
-function script-page() {
+function ScriptPage() {
     return (
         <div>
             <h1>Hello!</h1>
@@ -6,4 +6,4 @@ function script-page() {
     )
 }
 
-export default script-page
+export default ScriptPage
