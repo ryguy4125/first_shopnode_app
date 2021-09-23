@@ -2,7 +2,7 @@ import React from "react";
 import gql from "graphql-tag";
 import store from 'store-js';
 import { useQuery } from "@apollo/react-hooks";
-import { Card, ResourceList, Stack, TextStyle, Thumbnail } from "@shopify/polaris";
+import { Card, ResourceItem, ResourceList, Stack, TextStyle, Thumbnail } from "@shopify/polaris";
 import { Redirect } from '@shopify/app-bridge/actions';
 import { Context } from "@shopify/app-bridge-react";
 
@@ -44,18 +44,50 @@ function ProductList() {
     // if (data) return console.log("data:", data);
 
   return (
-    <div>
-      <h1>Product List</h1>
+    <Card>
+      <ResourceList
+        resourceName={ {singular: 'Product', plural: 'Products'} }
+        items={data.nodes}
+        renderItem={(item)=> {
+          const media = (
+            <Thumbnail 
+              source = {
+                item.images.edges[0] ? item.images.edges[0].node.originalSrc : ''
+              }
+              alt = {
+                item.images.edges[0] ? item.images.edges[0].node.altText : ''
+              }
+            />
+            );
+            const price =  item.variants.edges[0].node.price
+            return (
+              <ResourceList.Item
+                id={item.id}
+                media={media}
+                accessibilityLabel={`View details for ${item.title}`}
+                loading
+              >
+              <Stack>
+                <Stack.Item fill>
+                  <h3>
+                    <TextStyle variation='strong'>
+                      {item.title}
+                    </TextStyle>
+                  </h3>
+                </Stack.Item>
+                <Stack.Item>
+                  <p>${price}</p>
+                </Stack.Item>
+              </Stack>
+              </ResourceList.Item>
+            );
+        }}
+      >
 
-      {
-        data.nodes.map(item => {
-          return (
-            <p key={item.id} >{item.title}</p>
-          )
-          })
-      }
-    </div>
+      </ResourceList>
+    </Card>
   );
+
 }
 
 export default ProductList;
