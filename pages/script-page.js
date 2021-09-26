@@ -51,26 +51,40 @@ function ScriptPage() {
     const [createScriptTag] = useMutation(CREATE_SCRIPT_TAG);
     const [deleteScriptTag] = useMutation(DELETE_SCRIPT_TAG);
 
-    console.log(data);
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>{error.message}</div>
+    console.log("data: ",data);
+
     return (
         <div>
-          {/* <h1>Create Script Tags</h1>
+          <h1>Create Script Tags</h1>
           <button onClick={() => {
             createScriptTag(
               {variables: {
                 input: {
-                  src: 'https://7e46-76-91-68-224.ngrok.io/test-script.js',
+                  src: 'https://e275-76-91-68-224.ngrok.io/test-script.js',
                   displayScope: 'ALL',
                 },},
               }
             )
           }}>Create</button>
-            <h1>These are the script tags:</h1> */}
+            <h1>These are the script tags:</h1>
             {
                 data.scriptTags.edges.map(item => {
                     return (
                         <div key={item.node.id}>
                             <p>{item.node.id}</p>
+                            <button onClick={() => {
+                              deleteScriptTag({
+                                variables: {
+                                  id: item.node.id,
+                                }
+                              })
+                            }
+                          }
+                            >
+                              Delete
+                            </button>
                         </div>
                     )
                 })
