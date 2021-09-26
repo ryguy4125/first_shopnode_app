@@ -1,4 +1,4 @@
-import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import { ApolloClient, ApolloProvider, InMemoryCache, createHttpLink } from "@apollo/client";
 import App from "next/app";
 import { AppProvider } from "@shopify/polaris";
 import { Provider, useAppBridge } from "@shopify/app-bridge-react";
@@ -33,11 +33,14 @@ function MyProvider(props) {
   const app = useAppBridge();
 
   const client = new ApolloClient({
-    fetch: userLoggedInFetch(app),
-    fetchOptions: {
-      credentials: "include",
-    },
     cache: new InMemoryCache(),
+    link: createHttpLink({
+      credentials: 'include',
+      headers: {
+        "Content-Type": "application/graphql"
+      },
+      fetch: authenticatedFetch(app)
+    })
   });
 
   const Component = props.Component;
