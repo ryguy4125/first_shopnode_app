@@ -1,7 +1,7 @@
 import React from "react";
 import gql from "graphql-tag";
 import store from 'store-js';
-import { useQuery } from "@apollo/react-hooks";
+import { useQuery } from "@apollo/client";
 import { Card, ResourceItem, ResourceList, Stack, TextStyle, Thumbnail } from "@shopify/polaris";
 import { Redirect } from '@shopify/app-bridge/actions';
 import { Context } from "@shopify/app-bridge-react";
