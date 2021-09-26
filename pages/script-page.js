@@ -1,5 +1,6 @@
 import React from "react";
 import {gql, useMutation, useQuery } from "@apollo/client";
+import { Button, Card, Layout, Page, ResourceItem, ResourceList, Stack } from "@shopify/polaris";
 // import gql from "graphql-tag";
 
 
@@ -56,9 +57,21 @@ function ScriptPage() {
     console.log("data: ",data);
 
     return (
-        <div>
+        <Page>
+          <Layout>
+          <Layout.Section>
+          <Card>
           <h1>Create Script Tags</h1>
-          <button onClick={() => {
+          <h1>These are the script tags:</h1>
+          </Card>
+          </Layout.Section>
+          <Layout.Section secondary>
+            <Card>
+          <Button 
+            primary
+            size="slim"
+            type="submit"
+            onClick={() => {
             createScriptTag(
               {variables: {
                 input: {
@@ -67,29 +80,46 @@ function ScriptPage() {
                 },},
               }
             )
-          }}>Create</button>
-            <h1>These are the script tags:</h1>
-            {
-                data.scriptTags.edges.map(item => {
-                    return (
-                        <div key={item.node.id}>
-                            <p>{item.node.id}</p>
-                            <button onClick={() => {
-                              deleteScriptTag({
-                                variables: {
-                                  id: item.node.id,
-                                }
-                              })
-                            }
-                          }
-                            >
-                              Delete
-                            </button>
-                        </div>
-                    )
-                })
-            }
-        </div>
+          }}>Create</Button>
+          </Card>
+          </Layout.Section>
+          <Layout.Section>
+            <Card>
+            <ResourceList 
+              showHeader
+              resourceName={{ singular: 'Script', plural: 'Scripts' }}
+              items={data.scriptTags.edges}
+              renderItem={item => {
+                return (
+                  <ResourceItem id={item.id} >
+                    <Stack>
+                      <Stack.Item>
+                        <p>
+                          {item.node.id}
+                        </p>
+                      </Stack.Item>
+                      <Stack.Item>
+                        <Button type='submit' onClick={() => {
+                          deleteScriptTag({
+                            variables: {
+                              id: item.node.id
+                            },
+                            refetchQueries: [{ query: QUERY_SCRIPT_TAG }]
+                          })
+                        }}>
+                          Delete Script Tag
+                        </Button>
+                      </Stack.Item>
+                    </Stack>
+                  </ResourceItem>
+                )
+              }
+              }
+              />
+              </Card>
+              </Layout.Section>
+        </Layout>
+        </Page>
     )
 }
 
