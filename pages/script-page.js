@@ -1,6 +1,6 @@
 import React from "react";
-import { useMutation, useQuery } from "@apollo/react-hooks";
-import gql from "graphql-tag";
+import {gql, useMutation, useQuery } from "@apollo/client";
+// import gql from "graphql-tag";
 
 
 const CREATE_SCRIPT_TAG = gql`
@@ -54,7 +54,7 @@ function ScriptPage() {
     console.log(data);
     return (
         <div>
-          <h1>Create Script Tags</h1>
+          {/* <h1>Create Script Tags</h1>
           <button onClick={() => {
             createScriptTag(
               {variables: {
@@ -65,7 +65,7 @@ function ScriptPage() {
               }
             )
           }}>Create</button>
-            <h1>These are the script tags:</h1>
+            <h1>These are the script tags:</h1> */}
             {
                 data.scriptTags.edges.map(item => {
                     return (
